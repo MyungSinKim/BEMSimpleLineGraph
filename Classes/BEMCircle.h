@@ -24,4 +24,6 @@
 /// The value of the point
 @property (nonatomic) CGFloat absoluteValue;
 
+@property (strong, nonatomic) UIImage *image;
+
 @end

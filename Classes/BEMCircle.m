@@ -9,6 +9,12 @@
 
 #import "BEMCircle.h"
 
+@interface BEMCircle()
+
+@property (strong, nonatomic) UIImageView *imageView;
+
+@end
+
 @implementation BEMCircle
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -21,10 +27,17 @@
 }
 
 - (void)drawRect:(CGRect)rect {
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGContextAddEllipseInRect(ctx, rect);
-    [self.Pointcolor set];
-    CGContextFillPath(ctx);
+    if (self.image) {
+        self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+        self.imageView.image = self.image;
+        [self addSubview:self.imageView];
+    } else {
+        CGContextRef ctx = UIGraphicsGetCurrentContext();
+        CGContextAddEllipseInRect(ctx, rect);
+        [self.Pointcolor set];
+        CGContextFillPath(ctx);
+    }
+    
 }
 
 @end

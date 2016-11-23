@@ -175,7 +175,7 @@ IB_DESIGNABLE @interface BEMSimpleLineGraphView : UIView <UIGestureRecognizerDel
 
 /** Show X-Axis label at the bottom of the graph. Default value is YES.
  @see \p labelOnXAxisForIndex */
- @property (nonatomic) IBInspectable BOOL enableXAxisLabel;
+@property (nonatomic) IBInspectable BOOL enableXAxisLabel;
 
 
 /** When set to YES, the points on the Y-axis will be set to all fit in the graph view. When set to NO, the points on the Y-axis will be set with their absolute value (which means that certain points might not be visible because they are outside of the view). Default value is YES. */
@@ -402,6 +402,7 @@ IB_DESIGNABLE @interface BEMSimpleLineGraphView : UIView <UIGestureRecognizerDel
  @param graph The graph object which is requesting the label on the specified X-Axis position.
  @param index The index from left to right of a given label on the X-axis. Is the same index as the one for the points. The first value for the index is 0. */
 - (nullable NSString *)lineGraph:(nonnull BEMSimpleLineGraphView *)graph labelOnXAxisForIndex:(NSInteger)index;
+- (UIImage *)imageForPointAtIndex:(NSInteger)index;
 
 
 @end
@@ -496,7 +497,7 @@ IB_DESIGNABLE @interface BEMSimpleLineGraphView : UIView <UIGestureRecognizerDel
 - (CGFloat)staticPaddingForLineGraph:(BEMSimpleLineGraphView *)graph;
 
 
-/** Optional method to return a custom popup view to be used on the chart 
+/** Optional method to return a custom popup view to be used on the chart
  @param graph The graph object requesting the padding value.
  @return The custom popup view to use */
 - (UIView *)popUpViewForLineGraph:(BEMSimpleLineGraphView *)graph;
@@ -551,8 +552,8 @@ IB_DESIGNABLE @interface BEMSimpleLineGraphView : UIView <UIGestureRecognizerDel
 
 /** An array of graph indices where X-Axis labels should be drawn
  @discussion This allows high customization over where X-Axis labels can be placed.  They can be placed in non-consistent intervals. Additionally,
-    it allows you to draw the X-Axis labels based on traits of your data (eg. when the date corresponding to the data becomes a new day). 
-    When this is set, `numberOfGapsBetweenLabelsOnLineGraph` is ignored
+ it allows you to draw the X-Axis labels based on traits of your data (eg. when the date corresponding to the data becomes a new day).
+ When this is set, `numberOfGapsBetweenLabelsOnLineGraph` is ignored
  @param graph The graph object which is requesting the number of gaps between the labels.
  @return Array of graph indices to place X-Axis labels */
 - (NSArray *)incrementPositionsForXAxisOnLineGraph:(BEMSimpleLineGraphView *)graph;
@@ -582,8 +583,8 @@ IB_DESIGNABLE @interface BEMSimpleLineGraphView : UIView <UIGestureRecognizerDel
 
 
 /** Starting value to begin drawing Y-Axis labels  MUST ALSO IMPLEMENT incrementValueForYAxisOnLineGraph FOR THIS TO TAKE EFFECT
- @discussion This allows you to finally hone the granularity of the data label.  Instead of drawing values like 11.24, 
-    you can lock these values to draw 11.20 to make it more user friendly.  When this is set, `numberOfYAxisLabelsOnLineGraph` is ignored.
+ @discussion This allows you to finally hone the granularity of the data label.  Instead of drawing values like 11.24,
+ you can lock these values to draw 11.20 to make it more user friendly.  When this is set, `numberOfYAxisLabelsOnLineGraph` is ignored.
  @param graph The graph object which is requesting the number of gaps between the labels.
  @return The base value to draw the first Y-Axis label */
 - (CGFloat)baseValueForYAxisOnLineGraph:(BEMSimpleLineGraphView *)graph;
@@ -591,7 +592,7 @@ IB_DESIGNABLE @interface BEMSimpleLineGraphView : UIView <UIGestureRecognizerDel
 
 /** Increment value to apply to the base Y-Axis label.  MUST ALSO IMPLEMENT baseValueForYAxisOnLineGraph FOR THIS TO TAKE EFFECT
  @discussion This value tells the graph the interval to be applied to the base Y-Axis value.  This allows you to increment the Y-Axis via user-friendly values rather than values
-    like 37.17.  This let's you enforce that your Y-Axis have values rounded to whatever granularity best fits your data.
+ like 37.17.  This let's you enforce that your Y-Axis have values rounded to whatever granularity best fits your data.
  @param graph The graph object which is requesting the number of gaps between the labels.
  @return The increment value to add to the value returned from `baseValueForYAxisOnLineGraph` for future Y-Axis labels */
 - (CGFloat)incrementValueForYAxisOnLineGraph:(BEMSimpleLineGraphView *)graph;

@@ -197,7 +197,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     dataPoints = [NSMutableArray array];
     xAxisLabels = [NSMutableArray array];
     yAxisValues = [NSMutableArray array];
-
+    
     // Initialize BEM Objects
     _averageLine = [[BEMAverageLine alloc] init];
 }
@@ -234,7 +234,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         if ([self.delegate respondsToSelector:@selector(lineGraphDidFinishLoading:)])
             [self.delegate lineGraphDidFinishLoading:self];
     }
-
+    
 }
 
 - (void)layoutSubviews {
@@ -242,7 +242,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     
     if (CGSizeEqualToSize(self.currentViewSize, self.bounds.size))  return;
     self.currentViewSize = self.bounds.size;
-
+    
     [self drawGraph];
 }
 
@@ -270,7 +270,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         if (self.delegate &&
             [self.delegate respondsToSelector:@selector(noDataLabelEnableForLineGraph:)] &&
             ![self.delegate noDataLabelEnableForLineGraph:self]) return;
-
+        
         NSLog(@"[BEMSimpleLineGraph] Data source contains no data. A no data label will be displayed and drawing will stop. Add data to the data source and then reload the graph.");
         
 #if !TARGET_INTERFACE_BUILDER
@@ -281,7 +281,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         
         self.noDataLabel.backgroundColor = [UIColor clearColor];
         self.noDataLabel.textAlignment = NSTextAlignmentCenter;
-
+        
 #if !TARGET_INTERFACE_BUILDER
         NSString *noDataText;
         if ([self.delegate respondsToSelector:@selector(noDataLabelTextForLineGraph:)]) {
@@ -293,7 +293,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
 #endif
         self.noDataLabel.font = self.noDataLabelFont ?: [UIFont fontWithName:@"HelveticaNeue-Light" size:15];
         self.noDataLabel.textColor = self.noDataLabelColor ?: self.colorLine;
-
+        
         [self.viewForBaselineLayout addSubview:self.noDataLabel];
         
         // Let the delegate know that the graph finished layout updates
@@ -443,19 +443,19 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
             NSString *mString = [longestString stringByReplacingOccurrencesOfString:@"[0-9-]" withString:@"N" options:NSRegularExpressionSearch range:NSMakeRange(0, [longestString length])];
             NSString *fullString = [NSString stringWithFormat:@"%@%@%@", prefix, mString, suffix];
             self.YAxisLabelXOffset = [fullString sizeWithAttributes:attributes].width + 2;//MAX([maxValueString sizeWithAttributes:attributes].width + 10,
-                                     //    [minValueString sizeWithAttributes:attributes].width) + 5;
+            //    [minValueString sizeWithAttributes:attributes].width) + 5;
         } else {
             NSString *longestString = [NSString stringWithFormat:@"%i", (int)self.frame.size.height];
             self.YAxisLabelXOffset = [longestString sizeWithAttributes:attributes].width + 5;
         }
     } else self.YAxisLabelXOffset = 0;
-
+    
     // Draw the X-Axis
     [self drawXAxis];
-
+    
     // Draw the graph
     [self drawDots];
-
+    
     // Draw the Y-Axis
     if (self.enableYAxisLabel) [self drawYAxis];
 }
@@ -503,6 +503,8 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
 #else
             dotValue = (int)(arc4random() % 10000);
 #endif
+            
+            
             [dataPoints addObject:@(dotValue)];
             
             if (self.positionYAxisRight) {
@@ -525,6 +527,13 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
                 circleDot.alpha = 0;
                 circleDot.absoluteValue = dotValue;
                 circleDot.Pointcolor = self.colorPoint;
+                
+                if ([self.delegate respondsToSelector:@selector(imageForPointAtIndex:)]) {
+                    UIImage *image = [self.dataSource imageForPointAtIndex:i];
+                    if (image) {
+                        circleDot.image = image;
+                    }
+                }
                 
                 [self addSubview:circleDot];
                 if (self.alwaysDisplayPopUpLabels == YES) {
@@ -844,11 +853,11 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     CGPoint center;
     
     /* OLD LABEL GENERATION CODE
-    CGFloat availablePositionRoom = self.viewForBaselineLayout.frame.size.width; // Get view width of view
-    CGFloat positioningDivisor = (float)index / numberOfPoints; // Generate relative position of point based on current index and total
-    CGFloat horizontalTranslation = self.YAxisLabelXOffset + lRect.size.width;
-    CGFloat xPosition = (availablePositionRoom * positioningDivisor) + horizontalTranslation;
-    // NSLog(@"availablePositionRoom: %f, positioningDivisor: %f, horizontalTranslation: %f, xPosition: %f", availablePositionRoom, positioningDivisor, horizontalTranslation, xPosition); // Uncomment for debugging */
+     CGFloat availablePositionRoom = self.viewForBaselineLayout.frame.size.width; // Get view width of view
+     CGFloat positioningDivisor = (float)index / numberOfPoints; // Generate relative position of point based on current index and total
+     CGFloat horizontalTranslation = self.YAxisLabelXOffset + lRect.size.width;
+     CGFloat xPosition = (availablePositionRoom * positioningDivisor) + horizontalTranslation;
+     // NSLog(@"availablePositionRoom: %f, positioningDivisor: %f, horizontalTranslation: %f, xPosition: %f", availablePositionRoom, positioningDivisor, horizontalTranslation, xPosition); // Uncomment for debugging */
     
     // Determine the horizontal translation to perform on the far left and far right labels
     // This property is negated when calculating the position of reference frames
@@ -928,7 +937,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         // Plot according to min-max range
         NSNumber *minimumValue;
         NSNumber *maximumValue;
-
+        
         minimumValue = [self calculateMinimumPointValue];
         maximumValue = [self calculateMaximumPointValue];
         
@@ -1038,12 +1047,12 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         [label removeFromSuperview];
     }
     
-    [self didFinishDrawingIncludingYAxis:YES];  
+    [self didFinishDrawingIncludingYAxis:YES];
 }
 
 /// Area on the graph that doesn't include the axes
 - (CGRect)drawableGraphArea {
-//  CGRectMake(xAxisXPositionFirstOffset, self.frame.size.height-20, viewWidth/2, 20);
+    //  CGRectMake(xAxisXPositionFirstOffset, self.frame.size.height-20, viewWidth/2, 20);
     NSInteger xAxisHeight = 20;
     CGFloat xOrigin = self.positionYAxisRight ? 0 : self.YAxisLabelXOffset;
     CGFloat viewWidth = self.frame.size.width - self.YAxisLabelXOffset;
@@ -1091,10 +1100,10 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     
     if ([self.delegate respondsToSelector:@selector(popUpSuffixForlineGraph:)])
         suffix = [self.delegate popUpSuffixForlineGraph:self];
-
+    
     if ([self.delegate respondsToSelector:@selector(popUpPrefixForlineGraph:)])
         prefix = [self.delegate popUpPrefixForlineGraph:self];
-
+    
     int index = (int)(circleDot.tag - DotFirstTag100);
     NSNumber *value = dataPoints[index]; // @((NSInteger) circleDot.absoluteValue)
     NSString *formattedValue = [NSString stringWithFormat:self.formatStringForValues, value.doubleValue];
@@ -1183,7 +1192,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         [subviews removeFromSuperview];
     }
     [self drawGraph];
-//    [self setNeedsLayout];
+    //    [self setNeedsLayout];
 }
 
 #pragma mark - Calculations
@@ -1302,11 +1311,11 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-	    return YES;
+    return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-	    return YES;
+    return YES;
 }
 
 - (void)handleGestureAction:(UIGestureRecognizer *)recognizer {
@@ -1363,7 +1372,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
             if (self.enablePopUpReport == YES) {
                 self.popUpView.alpha = 0;
                 self.popUpLabel.alpha = 0;
-//                self.customPopUpView.alpha = 0;
+                //                self.customPopUpView.alpha = 0;
             }
         } completion:nil];
     }
@@ -1379,14 +1388,14 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     self.popUpView.center = CGPointMake(self.xCenterLabel, self.yCenterLabel);
     self.popUpLabel.center = self.popUpView.center;
     int index = (int)(closestDot.tag - DotFirstTag100);
-
+    
     if ([self.delegate respondsToSelector:@selector(lineGraph:modifyPopupView:forIndex:)]) {
         [self.delegate lineGraph:self modifyPopupView:self.popUpView forIndex:index];
     }
     self.xCenterLabel = closestDot.center.x;
     self.yCenterLabel = closestDot.center.y - closestDot.frame.size.height/2 - 15;
     self.popUpView.center = CGPointMake(self.xCenterLabel, self.yCenterLabel);
-
+    
     self.popUpView.alpha = 1.0;
     
     CGPoint popUpViewCenter = CGPointZero;
@@ -1414,7 +1423,7 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
         self.yCenterLabel = closestDot.center.y + closestDot.frame.size.height/2 + 15;
         popUpViewCenter = CGPointMake(self.xCenterLabel, closestDot.center.y + closestDot.frame.size.height/2 + 15);
     }
-
+    
     if (!CGPointEqualToPoint(popUpViewCenter, CGPointZero)) {
         self.popUpView.center = popUpViewCenter;
     }
@@ -1547,10 +1556,10 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     if (padding > 90.0) {
         padding = 90.0;
     }
-
+    
     if ([self.delegate respondsToSelector:@selector(staticPaddingForLineGraph:)])
         padding = [self.delegate staticPaddingForLineGraph:self];
-
+    
     if (self.enableXAxisLabel) {
         if ([self.dataSource respondsToSelector:@selector(lineGraph:labelOnXAxisForIndex:)] || [self.dataSource respondsToSelector:@selector(labelOnXAxisForIndex:)]) {
             if ([xAxisLabels count] > 0) {
