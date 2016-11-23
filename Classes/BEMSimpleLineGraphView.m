@@ -528,8 +528,8 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
                 circleDot.absoluteValue = dotValue;
                 circleDot.Pointcolor = self.colorPoint;
                 
-                if ([self.delegate respondsToSelector:@selector(imageForPointAtIndex:)]) {
-                    UIImage *image = [self.dataSource imageForPointAtIndex:i];
+                if ([self.delegate respondsToSelector:@selector(lineGraph:imageForPointAtIndex:)]) {
+                    UIImage *image = [self.dataSource lineGraph:self imageForPointAtIndex:i];
                     if (image) {
                         circleDot.image = image;
                     }
