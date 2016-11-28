@@ -37,7 +37,6 @@
         [self.Pointcolor set];
         CGContextFillPath(ctx);
     }
-    
 }
 
 @end
