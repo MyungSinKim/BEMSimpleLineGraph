@@ -92,6 +92,8 @@ typedef NS_ENUM(NSUInteger, BEMLineGradientDirection) {
 
 //----- COLORS -----//
 
+@property (strong, nonatomic) UIColor *glowColor;
+
 /// The line color. A single, solid color which is applied to the entire line. If the \p gradient property is non-nil this property will be ignored.
 @property (strong, nonatomic) UIColor *color;
 
