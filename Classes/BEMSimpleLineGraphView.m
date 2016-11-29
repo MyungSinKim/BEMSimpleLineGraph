@@ -813,7 +813,9 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
 }
 
 - (NSString *)xAxisTextForIndex:(NSInteger)index {
-    NSString *xAxisLabelText = @"";
+    //    NSString *xAxisLabelText = @"";
+    
+    NSAttributedString *xAxisLabelText = [[NSAttributedString alloc] initWithString:@""];
     
     if ([self.dataSource respondsToSelector:@selector(lineGraph:labelOnXAxisForIndex:)]) {
         xAxisLabelText = [self.dataSource lineGraph:self labelOnXAxisForIndex:index];
@@ -838,18 +840,18 @@ typedef NS_ENUM(NSInteger, BEMInternalTags)
     return xAxisLabelText;
 }
 
-- (UILabel *)xAxisLabelWithText:(NSString *)text atIndex:(NSInteger)index {
+- (UILabel *)xAxisLabelWithText:(NSAttributedString *)text atIndex:(NSInteger)index {
     UILabel *labelXAxis = [[UILabel alloc] init];
-    labelXAxis.text = text;
-    labelXAxis.font = self.labelFont;
+    labelXAxis.attributedText = text;
     labelXAxis.textAlignment = 1;
-    labelXAxis.textColor = self.colorXaxisLabel;
     labelXAxis.backgroundColor = [UIColor clearColor];
     labelXAxis.tag = DotLastTag1000;
     
     // Add support multi-line, but this might overlap with the graph line if text have too many lines
-    labelXAxis.numberOfLines = 0;
-    CGRect lRect = [labelXAxis.text boundingRectWithSize:self.viewForBaselineLayout.frame.size options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:labelXAxis.font} context:nil];
+    labelXAxis.numberOfLines = 2;
+    
+    
+    CGRect lRect = [labelXAxis.text boundingRectWithSize:CGSizeMake(self.viewForBaselineLayout.frame.size.width, self.viewForBaselineLayout.frame.size.height + 30) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:20]} context:nil];
     
     CGPoint center;
     
